@@ -25,7 +25,7 @@ def create_receipt_row(image_path: str) -> int:
 def update_receipt_parsed(receipt_id: int, raw_ocr_text: str, parsed: Dict[str, Any]) -> None:
     
     store_name = parsed.get("store_name")
-    purchase_date = parsed.get("purchase_date") 
+    purchase_date = parsed.get("date") or parsed.get("purchase_date")
     total = parsed.get("total")
     parsed_json_str = json.dumps(parsed, ensure_ascii=False) #this converts a dict into a string --> to be stored in a single database column (parsed_json column)
 
