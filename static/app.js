@@ -12,8 +12,8 @@ async function uploadReceipt() {
 
 	try {
 		const res = await fetch("/api/receipts/process", {
-			method = POST,
-			body = formData,
+			method: "POST",
+			body: formData,
 		});
 
 		const data = await res.json();
