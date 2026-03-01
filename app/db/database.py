@@ -1,4 +1,5 @@
 import json
+>>>>>>> dev
 import sqlite3
 from pathlib import Path
 
@@ -17,4 +18,3 @@ def init_db() -> None:
     with get_db_connection() as conn:
         conn.executescript(schema)
         conn.commit()
-
