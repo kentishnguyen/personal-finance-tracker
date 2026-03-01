@@ -17,5 +17,9 @@ def run_ocr(image_path: str) -> str:
     _, thresh = cv2.threshold(resize, 150, 255, cv2.THRESH_BINARY)
     
     # Extract the text
-    text = pytesseract.image_to_string(thresh);
+    text = pytesseract.image_to_string(thresh, config='--oem 3 --psm 6')
+
+    print("\n===== OCR DEBUG =====")
+    print(text)
+    print("=====================\n")
     return text.strip()

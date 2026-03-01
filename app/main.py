@@ -23,6 +23,7 @@ async def process_receipt(file: UploadFile = File(...)):
     receipt_id = create_receipt_row(file_path)
     try:
         raw_ocr, parsed_data = await run_pipeline(file_path, receipt_id)
+        update_receipt_parsed(receipt_id, raw_ocr, parsed_data)
         return {"id": receipt_id, "status": "success", "data": parsed_data}
 
     except Exception as e:

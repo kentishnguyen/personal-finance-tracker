@@ -2,7 +2,7 @@ async function uploadReceipt() {
     const fileInput = document.getElementById("fileInput");
     const file = fileInput.files[0];
     const statusEl = document.getElementById("uploadStatus");
-    const resultEl = document.getElementById("result");
+    //const resultEl = document.getElementById("result");
 
     if (!file) {
         alert("Please select a file first.");
@@ -10,7 +10,7 @@ async function uploadReceipt() {
     }
 
     statusEl.textContent = "Uploading and processing...";
-    resultEl.textContent = "";
+    //resultEl.textContent = "";
 
     const formData = new FormData();
     formData.append("file", file);
@@ -29,8 +29,8 @@ async function uploadReceipt() {
         }
 
         statusEl.textContent = "✅ Receipt processed successfully!";
-        resultEl.textContent = JSON.stringify(data, null, 2);
-        loadHistory();
+        //resultEl.textContent = JSON.stringify(data, null, 2);
+	await loadHistory();
         loadSummary();
     } catch (err) {
         console.error(err);
@@ -42,27 +42,43 @@ async function loadHistory() {
     try {
         const res = await fetch("/api/receipts");
         const receipts = await res.json();
+
         const tbody = document.getElementById("historyBody");
         tbody.innerHTML = "";
 
-        if (receipts.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='5'>No receipts yet.</td></tr>";
+        // ✅ only show successfully parsed receipts
+        const successful = receipts.filter(r => r.status === "parsed");
+
+        if (successful.length === 0) {
+            tbody.innerHTML =
+                "<tr><td colspan='5'>No receipts yet.</td></tr>";
             return;
         }
 
-        for (const r of receipts) {
+        for (const r of successful) {
             const tr = document.createElement("tr");
+
+            const totalText =
+                r.total !== null && r.total !== undefined
+                    ? "$" + Number(r.total).toFixed(2)
+                    : "_";
+
             tr.innerHTML = `
                 <td>${r.id}</td>
-                <td>${r.store_name || "—"}</td>
-                <td>${r.purchase_date || "—"}</td>
-                <td>${r.total != null ? "$" + r.total.toFixed(2) : "—"}</td>
+                <td>${r.store_name || "_"}</td>
+                <td>${r.purchase_date || "_"}</td>
+                <td>${totalText}</td>
                 <td class="status-${r.status}">${r.status}</td>
             `;
+
             tbody.appendChild(tr);
         }
     } catch (err) {
         console.error("Failed to load history:", err);
+
+        const tbody = document.getElementById("historyBody");
+        tbody.innerHTML =
+            "<tr><td colspan='5'>Failed to load receipts.</td></tr>";
     }
 }
 
@@ -96,3 +112,6 @@ async function loadSummary() {
 // Load data on page start
 loadHistory();
 loadSummary();
+window.addEventListener("DOMContentLoaded", () => {
+    loadHistory();
+});
