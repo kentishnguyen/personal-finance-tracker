@@ -1,4 +1,5 @@
 import os
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from app.services.validate import run_pipeline
 from db.database import init_db
@@ -28,3 +29,5 @@ async def process_receipt(file: UploadFile = File(...)):
 @app.on_event("startup")
 def startup_event():
     init_db()
+
+app.mount("/", StaticFiles(directory="static", html=true), name="static")
