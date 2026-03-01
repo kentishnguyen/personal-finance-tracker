@@ -3,8 +3,9 @@ from app.models import ReceiptSchema
 from .ocr import run_ocr
 from .llm import extract_receipt
 from app.db.database import save_receipt
+from db.crud import update_receipt_parsed, mark_receipt_error
 
-async def run_pipeline(image_path: str):
+async def run_pipeline(image_path: str, receipt_id: int):
     
     ocr_text = run_ocr(image_path)
 
@@ -15,7 +16,7 @@ async def run_pipeline(image_path: str):
 
             valid_data = ReceiptSchema(**parsed_json)
 
-            receipt_id = save_receipt(image_path, ocr_text, parsed_json)
+            update_receipt_parsed(receipt_id, ocr_text, valid_data.model_dump())
 
             return valid_data
 

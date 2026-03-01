@@ -3,9 +3,9 @@ import os
 import json
 
 # Setup - usually you'd put this in a .env file
-genai.configure(api_key="AIzaSyAyTningQOYjJOuYcJfVcy29hSmJMBGgvE")
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-3-flash-preview")
-
+1
 async def extract_receipt(ocr_text: str) -> dict:
     prompt = f"""
     Extract the following details from this receipt OCR text:
